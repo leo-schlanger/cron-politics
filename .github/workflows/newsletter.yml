@@ -2,13 +2,13 @@ name: Newsletter
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Todo dia às 8h UTC (5h Brasília)
+    - cron: '0 */4 * * *'  # A cada 4 horas (0h, 4h, 8h, 12h, 16h, 20h UTC)
   workflow_dispatch:
     inputs:
       hours:
-        description: 'Horas para buscar (default: 24)'
+        description: 'Horas para buscar (default: 4)'
         required: false
-        default: '24'
+        default: '4'
 
 jobs:
   send:
