@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(wc:*)",
+      "Bash(cd:*)",
+      "Bash(export DATABASE_URL:*)",
+      "Bash(python main.py:*)",
+      "Bash(DATABASE_URL='postgresql://postgres:3r#B.ubRc*sD_We@db.jjifjbdfpvgeseqbjpkg.supabase.co:5432/postgres' python main.py:*)",
+      "Bash(python -c:*)",
+      "Bash(nslookup:*)"
+    ]
+  }
+}

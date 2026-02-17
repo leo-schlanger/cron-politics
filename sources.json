@@ -1,0 +1,424 @@
+{
+  "politics_pt": {
+    "description": "Política portuguesa",
+    "feeds": [
+      {
+        "name": "Observador",
+        "url": "https://observador.pt/feed/",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "RTP Notícias",
+        "url": "https://www.rtp.pt/noticias/rss",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Notícias ao Minuto",
+        "url": "https://www.noticiasaominuto.com/rss/politica",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "ECO",
+        "url": "https://eco.sapo.pt/feed/",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Euronews PT",
+        "url": "https://pt.euronews.com/rss",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "SIC Notícias",
+        "url": "https://sicnoticias.pt/rss",
+        "country": "Portugal",
+        "language": "pt"
+      }
+    ]
+  },
+  "politics_br": {
+    "description": "Política brasileira",
+    "feeds": [
+      {
+        "name": "G1 - Política",
+        "url": "https://g1.globo.com/rss/g1/politica/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Folha - Poder",
+        "url": "https://feeds.folha.uol.com.br/poder/rss091.xml",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Poder360",
+        "url": "https://www.poder360.com.br/feed/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Congresso em Foco",
+        "url": "https://congressoemfoco.uol.com.br/feed/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Carta Capital",
+        "url": "https://www.cartacapital.com.br/feed/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Brasil de Fato",
+        "url": "https://www.brasildefato.com.br/rss2.xml",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Nexo Jornal",
+        "url": "https://www.nexojornal.com.br/rss.xml",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Agência Brasil",
+        "url": "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml",
+        "country": "Brasil",
+        "language": "pt"
+      }
+    ]
+  },
+  "politics_world": {
+    "description": "Política internacional",
+    "feeds": [
+      {
+        "name": "BBC - Politics",
+        "url": "https://feeds.bbci.co.uk/news/politics/rss.xml",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "The Guardian - Politics",
+        "url": "https://www.theguardian.com/politics/rss",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "The Hill",
+        "url": "https://thehill.com/feed/",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "NPR - Politics",
+        "url": "https://feeds.npr.org/1014/rss.xml",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "DW - Politics",
+        "url": "https://rss.dw.com/xml/rss-en-pol",
+        "country": "Germany",
+        "language": "en"
+      },
+      {
+        "name": "ABC News - Politics",
+        "url": "https://abcnews.go.com/abcnews/politicsheadlines",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "CBS News - Politics",
+        "url": "https://www.cbsnews.com/latest/rss/politics",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Sky News - Politics",
+        "url": "https://feeds.skynews.com/feeds/rss/politics.xml",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "Independent - Politics",
+        "url": "https://www.independent.co.uk/news/uk/politics/rss",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "Washington Post - Politics",
+        "url": "https://feeds.washingtonpost.com/rss/politics",
+        "country": "USA",
+        "language": "en"
+      }
+    ]
+  },
+  "controversies": {
+    "description": "Polêmicas, escândalos e crises",
+    "feeds": [
+      {
+        "name": "Notícias ao Minuto - Portugal",
+        "url": "https://www.noticiasaominuto.com/rss/pais",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "G1 - Brasil",
+        "url": "https://g1.globo.com/rss/g1/brasil/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Daily Mail",
+        "url": "https://www.dailymail.co.uk/news/index.rss",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "The Sun",
+        "url": "https://www.thesun.co.uk/news/feed/",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "TMZ",
+        "url": "https://www.tmz.com/rss.xml",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Page Six",
+        "url": "https://pagesix.com/feed/",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Metro UK",
+        "url": "https://metro.co.uk/news/feed/",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "NY Post",
+        "url": "https://nypost.com/feed/",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Fox News",
+        "url": "https://moxie.foxnews.com/google-publisher/latest.xml",
+        "country": "USA",
+        "language": "en"
+      }
+    ]
+  },
+  "conflicts": {
+    "description": "Guerras, conflitos armados e tensões geopolíticas",
+    "feeds": [
+      {
+        "name": "Al Jazeera",
+        "url": "https://www.aljazeera.com/xml/rss/all.xml",
+        "country": "Qatar",
+        "language": "en"
+      },
+      {
+        "name": "BBC - World",
+        "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "The Guardian - World",
+        "url": "https://www.theguardian.com/world/rss",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "DW - World",
+        "url": "https://rss.dw.com/xml/rss-en-world",
+        "country": "Germany",
+        "language": "en"
+      },
+      {
+        "name": "Times of Israel",
+        "url": "https://www.timesofisrael.com/feed/",
+        "country": "Israel",
+        "language": "en"
+      },
+      {
+        "name": "Ukrinform",
+        "url": "https://www.ukrinform.net/rss/block-lastnews",
+        "country": "Ukraine",
+        "language": "en"
+      },
+      {
+        "name": "SCMP - Asia",
+        "url": "https://www.scmp.com/rss/91/feed",
+        "country": "Hong Kong",
+        "language": "en"
+      },
+      {
+        "name": "Defense News",
+        "url": "https://www.defensenews.com/arc/outboundfeeds/rss/?outputType=xml",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Middle East Eye",
+        "url": "https://www.middleeasteye.net/rss",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "War on the Rocks",
+        "url": "https://warontherocks.com/feed/",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Foreign Policy",
+        "url": "https://foreignpolicy.com/feed/",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "The Diplomat",
+        "url": "https://thediplomat.com/feed/",
+        "country": "USA",
+        "language": "en"
+      }
+    ]
+  },
+  "disasters": {
+    "description": "Desastres naturais e emergências",
+    "feeds": [
+      {
+        "name": "ReliefWeb - Disasters",
+        "url": "https://reliefweb.int/disasters/rss.xml",
+        "country": "International",
+        "language": "en"
+      },
+      {
+        "name": "USGS Earthquakes",
+        "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.atom",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "NOAA - Weather",
+        "url": "https://www.weather.gov/rss_page.php?site_name=nws",
+        "country": "USA",
+        "language": "en"
+      },
+      {
+        "name": "Phys.org - Earth",
+        "url": "https://phys.org/rss-feed/earth-news/",
+        "country": "International",
+        "language": "en"
+      },
+      {
+        "name": "G1 - Natureza",
+        "url": "https://g1.globo.com/rss/g1/natureza/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "BBC - Science/Environment",
+        "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "The Guardian - Environment",
+        "url": "https://www.theguardian.com/environment/rss",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "Climate Home News",
+        "url": "https://www.climatechangenews.com/feed/",
+        "country": "UK",
+        "language": "en"
+      },
+      {
+        "name": "Mongabay",
+        "url": "https://news.mongabay.com/feed/",
+        "country": "USA",
+        "language": "en"
+      }
+    ]
+  },
+  "keywords": {
+    "high_priority": {
+      "politics_pt": [
+        "assembleia da república", "parlamento", "primeiro-ministro", "governo",
+        "presidente", "marcelo", "montenegro", "costa", "ps", "psd", "chega",
+        "bloco", "pcp", "iniciativa liberal", "livre", "pan", "cds",
+        "eleições", "autárquicas", "legislativas", "europeias", "sondagem",
+        "demissão", "destituição", "moção", "censura", "confiança",
+        "corrupção", "escândalo", "operação", "detenção", "ministro",
+        "ventura", "rui rio", "rangel", "ana gomes"
+      ],
+      "politics_br": [
+        "congresso", "senado", "câmara", "stf", "tse", "planalto", "brasília",
+        "lula", "bolsonaro", "pt", "pl", "mdb", "união brasil", "pp",
+        "impeachment", "cpi", "pec", "votação", "sessão",
+        "ministro", "deputado", "senador", "governador",
+        "corrupção", "operação", "pf", "prisão", "delação",
+        "haddad", "tarcísio", "ciro", "marina", "dino"
+      ],
+      "politics_world": [
+        "trump", "biden", "white house", "congress", "senate",
+        "putin", "russia", "kremlin", "xi jinping", "china",
+        "european union", "nato", "un", "g7", "g20", "brics",
+        "election", "vote", "impeachment", "sanction",
+        "prime minister", "president", "parliament",
+        "macron", "scholz", "sunak", "modi", "erdogan", "netanyahu"
+      ],
+      "controversies": [
+        "escândalo", "polémica", "controvérsia", "demissão", "renúncia",
+        "acusação", "denúncia", "investigação", "inquérito", "processo",
+        "corrupção", "fraude", "abuso", "assédio", "crime",
+        "prisão", "detenção", "condenação", "sentença",
+        "vazamento", "leak", "whistleblower", "scandal", "controversy",
+        "arrested", "charged", "indicted", "convicted"
+      ],
+      "conflicts": [
+        "guerra", "war", "conflito", "conflict", "ataque", "attack",
+        "bombardeio", "bombing", "míssil", "missile", "drone",
+        "invasão", "invasion", "ocupação", "occupation",
+        "ucrânia", "ukraine", "gaza", "israel", "hamas", "hezbollah",
+        "taiwan", "coreia", "korea", "irã", "iran",
+        "tropas", "troops", "militar", "military", "exército", "army",
+        "mortos", "casualties", "vítimas", "victims", "refugiados", "refugees",
+        "cease-fire", "ceasefire", "airstrike", "offensive", "frontline"
+      ],
+      "disasters": [
+        "terremoto", "earthquake", "tremor", "sismo",
+        "tsunami", "furacão", "hurricane", "tufão", "typhoon", "ciclone",
+        "tornado", "tempestade", "storm", "inundação", "flood", "enchente",
+        "incêndio", "fire", "wildfire", "queimada",
+        "erupção", "eruption", "vulcão", "volcano",
+        "deslizamento", "landslide", "avalanche",
+        "seca", "drought", "emergência", "emergency", "evacuação", "evacuation",
+        "mortos", "vítimas", "desabrigados", "desaparecidos",
+        "disaster", "catastrophe", "destruction", "devastation"
+      ]
+    },
+    "filter_out": {
+      "terms": [
+        "horóscopo", "horoscope", "zodíaco", "astrologia",
+        "reality show", "big brother", "celebridade",
+        "fofoca", "gossip", "kardashian",
+        "bitcoin price", "crypto price", "nft",
+        "promoção", "desconto", "oferta", "black friday",
+        "receita", "recipe", "lifestyle", "moda", "fashion"
+      ]
+    }
+  }
+}
