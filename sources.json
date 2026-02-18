@@ -9,8 +9,20 @@
         "language": "pt"
       },
       {
-        "name": "RTP Notícias",
-        "url": "https://www.rtp.pt/noticias/rss",
+        "name": "RTP Política",
+        "url": "https://www.rtp.pt/noticias/rss/politica",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "RTP País",
+        "url": "https://www.rtp.pt/noticias/rss/pais",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Público",
+        "url": "https://feeds.feedburner.com/PublicoRSS",
         "country": "Portugal",
         "language": "pt"
       },
