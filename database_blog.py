@@ -9,9 +9,13 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from dotenv import load_dotenv
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
+
+# Load .env file
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 

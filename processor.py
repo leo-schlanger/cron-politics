@@ -10,6 +10,10 @@ import json
 import requests
 from typing import Optional
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 from database_blog import (
     get_pending_news, save_blog_post, update_queue_status,

@@ -5,6 +5,10 @@ Cron Politics - News Aggregator CLI
 import sys
 import json
 import argparse
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 from database import (
     setup_database,
