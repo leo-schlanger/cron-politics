@@ -1,0 +1,61 @@
+name: Process Blog Posts
+
+on:
+  schedule:
+    # Executa a cada 2 horas
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      min_score:
+        description: 'Minimum priority score'
+        required: false
+        default: '2.0'
+      limit:
+        description: 'Max posts to process'
+        required: false
+        default: '15'
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Initialize blog tables
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python processor.py init
+
+      - name: Queue high priority news
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python processor.py queue \
+            --min-score ${{ github.event.inputs.min_score || '2.0' }} \
+            --limit ${{ github.event.inputs.limit || '15' }}
+
+      - name: Process queue
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_PROVIDER: ${{ secrets.AI_PROVIDER || 'anthropic' }}
+        run: |
+          python processor.py process \
+            --limit ${{ github.event.inputs.limit || '15' }}
+
+      - name: Show stats
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python processor.py stats

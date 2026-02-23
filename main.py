@@ -17,6 +17,22 @@ from database import (
 from fetcher import fetch_all
 
 
+def get_blog_module():
+    """Import blog modules lazily to avoid errors if not configured"""
+    try:
+        from database_blog import init_blog_tables, get_blog_stats
+        from processor import queue_high_priority_news, process_queue
+        return {
+            "init_blog_tables": init_blog_tables,
+            "get_blog_stats": get_blog_stats,
+            "queue_high_priority_news": queue_high_priority_news,
+            "process_queue": process_queue
+        }
+    except Exception as e:
+        print(f"Blog module not available: {e}")
+        return None
+
+
 def load_sources_json():
     """Load sources.json file"""
     with open("sources.json", "r", encoding="utf-8") as f:

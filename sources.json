@@ -1,6 +1,8 @@
 {
   "politics_pt": {
-    "description": "Política portuguesa",
+    "description": "Politica portuguesa",
+    "region": "Portugal",
+    "blog_label": "Politica Portugal",
     "feeds": [
       {
         "name": "Observador",
@@ -9,25 +11,25 @@
         "language": "pt"
       },
       {
-        "name": "RTP Política",
+        "name": "RTP Politica",
         "url": "https://www.rtp.pt/noticias/rss/politica",
         "country": "Portugal",
         "language": "pt"
       },
       {
-        "name": "RTP País",
+        "name": "RTP Pais",
         "url": "https://www.rtp.pt/noticias/rss/pais",
         "country": "Portugal",
         "language": "pt"
       },
       {
-        "name": "Público",
+        "name": "Publico",
         "url": "https://feeds.feedburner.com/PublicoRSS",
         "country": "Portugal",
         "language": "pt"
       },
       {
-        "name": "Notícias ao Minuto",
+        "name": "Noticias ao Minuto",
         "url": "https://www.noticiasaominuto.com/rss/politica",
         "country": "Portugal",
         "language": "pt"
@@ -45,18 +47,56 @@
         "language": "pt"
       },
       {
-        "name": "SIC Notícias",
+        "name": "SIC Noticias",
         "url": "https://sicnoticias.pt/rss",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Jornal de Noticias",
+        "url": "https://www.jn.pt/rss/",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Diario de Noticias",
+        "url": "https://www.dn.pt/rss/",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "TSF",
+        "url": "https://www.tsf.pt/rss/",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Expresso",
+        "url": "https://expresso.pt/rss",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "SAPO 24",
+        "url": "https://24.sapo.pt/rss",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Visao",
+        "url": "https://visao.pt/feed/",
         "country": "Portugal",
         "language": "pt"
       }
     ]
   },
   "politics_br": {
-    "description": "Política brasileira",
+    "description": "Politica brasileira",
+    "region": "Brasil",
+    "blog_label": "Politica Brasil",
     "feeds": [
       {
-        "name": "G1 - Política",
+        "name": "G1 - Politica",
         "url": "https://g1.globo.com/rss/g1/politica/",
         "country": "Brasil",
         "language": "pt"
@@ -98,7 +138,7 @@
         "language": "pt"
       },
       {
-        "name": "Agência Brasil",
+        "name": "Agencia Brasil",
         "url": "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml",
         "country": "Brasil",
         "language": "pt"
@@ -106,7 +146,9 @@
     ]
   },
   "politics_world": {
-    "description": "Política internacional",
+    "description": "Politica internacional",
+    "region": "Internacional",
+    "blog_label": "Politica Internacional",
     "feeds": [
       {
         "name": "BBC - Politics",
@@ -171,11 +213,19 @@
     ]
   },
   "controversies": {
-    "description": "Polêmicas, escândalos e crises",
+    "description": "Polemicas, escandalos e crises",
+    "region": "Misto",
+    "blog_label": "Controversias",
     "feeds": [
       {
-        "name": "Notícias ao Minuto - Portugal",
+        "name": "Noticias ao Minuto - Portugal",
         "url": "https://www.noticiasaominuto.com/rss/pais",
+        "country": "Portugal",
+        "language": "pt"
+      },
+      {
+        "name": "Correio da Manha",
+        "url": "https://www.cmjornal.pt/rss",
         "country": "Portugal",
         "language": "pt"
       },
@@ -195,18 +245,6 @@
         "name": "The Sun",
         "url": "https://www.thesun.co.uk/news/feed/",
         "country": "UK",
-        "language": "en"
-      },
-      {
-        "name": "TMZ",
-        "url": "https://www.tmz.com/rss.xml",
-        "country": "USA",
-        "language": "en"
-      },
-      {
-        "name": "Page Six",
-        "url": "https://pagesix.com/feed/",
-        "country": "USA",
         "language": "en"
       },
       {
@@ -230,7 +268,9 @@
     ]
   },
   "conflicts": {
-    "description": "Guerras, conflitos armados e tensões geopolíticas",
+    "description": "Guerras, conflitos armados e tensoes geopoliticas",
+    "region": "Internacional",
+    "blog_label": "Conflitos",
     "feeds": [
       {
         "name": "Al Jazeera",
@@ -307,12 +347,14 @@
     ]
   },
   "disasters": {
-    "description": "Desastres naturais e emergências",
+    "description": "Desastres naturais e emergencias",
+    "region": "Internacional",
+    "blog_label": "Desastres",
     "feeds": [
       {
         "name": "ReliefWeb - Disasters",
         "url": "https://reliefweb.int/disasters/rss.xml",
-        "country": "International",
+        "country": "Internacional",
         "language": "en"
       },
       {
@@ -330,7 +372,7 @@
       {
         "name": "Phys.org - Earth",
         "url": "https://phys.org/rss-feed/earth-news/",
-        "country": "International",
+        "country": "Internacional",
         "language": "en"
       },
       {
@@ -368,21 +410,23 @@
   "keywords": {
     "high_priority": {
       "politics_pt": [
-        "assembleia da república", "parlamento", "primeiro-ministro", "governo",
+        "assembleia da republica", "parlamento", "primeiro-ministro", "governo",
         "presidente", "marcelo", "montenegro", "costa", "ps", "psd", "chega",
         "bloco", "pcp", "iniciativa liberal", "livre", "pan", "cds",
-        "eleições", "autárquicas", "legislativas", "europeias", "sondagem",
-        "demissão", "destituição", "moção", "censura", "confiança",
-        "corrupção", "escândalo", "operação", "detenção", "ministro",
-        "ventura", "rui rio", "rangel", "ana gomes"
+        "eleicoes", "autarquicas", "legislativas", "europeias", "sondagem",
+        "demissao", "destituicao", "mocao", "censura", "confianca",
+        "corrupcao", "escandalo", "operacao", "detencao", "ministro",
+        "ventura", "rui rio", "rangel", "ana gomes",
+        "orcamento de estado", "deficit", "divida publica", "irs", "irc",
+        "tribunal constitucional", "procuradoria", "pgr", "policia judiciaria"
       ],
       "politics_br": [
-        "congresso", "senado", "câmara", "stf", "tse", "planalto", "brasília",
-        "lula", "bolsonaro", "pt", "pl", "mdb", "união brasil", "pp",
-        "impeachment", "cpi", "pec", "votação", "sessão",
+        "congresso", "senado", "camara", "stf", "tse", "planalto", "brasilia",
+        "lula", "bolsonaro", "pt", "pl", "mdb", "uniao brasil", "pp",
+        "impeachment", "cpi", "pec", "votacao", "sessao",
         "ministro", "deputado", "senador", "governador",
-        "corrupção", "operação", "pf", "prisão", "delação",
-        "haddad", "tarcísio", "ciro", "marina", "dino"
+        "corrupcao", "operacao", "pf", "prisao", "delacao",
+        "haddad", "tarcisio", "ciro", "marina", "dino"
       ],
       "politics_world": [
         "trump", "biden", "white house", "congress", "senate",
@@ -393,44 +437,115 @@
         "macron", "scholz", "sunak", "modi", "erdogan", "netanyahu"
       ],
       "controversies": [
-        "escândalo", "polémica", "controvérsia", "demissão", "renúncia",
-        "acusação", "denúncia", "investigação", "inquérito", "processo",
-        "corrupção", "fraude", "abuso", "assédio", "crime",
-        "prisão", "detenção", "condenação", "sentença",
+        "escandalo", "polemica", "controversia", "demissao", "renuncia",
+        "acusacao", "denuncia", "investigacao", "inquerito", "processo",
+        "corrupcao", "fraude", "abuso", "assedio", "crime",
+        "prisao", "detencao", "condenacao", "sentenca",
         "vazamento", "leak", "whistleblower", "scandal", "controversy",
         "arrested", "charged", "indicted", "convicted"
       ],
       "conflicts": [
         "guerra", "war", "conflito", "conflict", "ataque", "attack",
-        "bombardeio", "bombing", "míssil", "missile", "drone",
-        "invasão", "invasion", "ocupação", "occupation",
-        "ucrânia", "ukraine", "gaza", "israel", "hamas", "hezbollah",
-        "taiwan", "coreia", "korea", "irã", "iran",
-        "tropas", "troops", "militar", "military", "exército", "army",
-        "mortos", "casualties", "vítimas", "victims", "refugiados", "refugees",
+        "bombardeio", "bombing", "missil", "missile", "drone",
+        "invasao", "invasion", "ocupacao", "occupation",
+        "ucrania", "ukraine", "gaza", "israel", "hamas", "hezbollah",
+        "taiwan", "coreia", "korea", "ira", "iran",
+        "tropas", "troops", "militar", "military", "exercito", "army",
+        "mortos", "casualties", "vitimas", "victims", "refugiados", "refugees",
         "cease-fire", "ceasefire", "airstrike", "offensive", "frontline"
       ],
       "disasters": [
         "terremoto", "earthquake", "tremor", "sismo",
-        "tsunami", "furacão", "hurricane", "tufão", "typhoon", "ciclone",
-        "tornado", "tempestade", "storm", "inundação", "flood", "enchente",
-        "incêndio", "fire", "wildfire", "queimada",
-        "erupção", "eruption", "vulcão", "volcano",
+        "tsunami", "furacao", "hurricane", "tufao", "typhoon", "ciclone",
+        "tornado", "tempestade", "storm", "inundacao", "flood", "enchente",
+        "incendio", "fire", "wildfire", "queimada",
+        "erupcao", "eruption", "vulcao", "volcano",
         "deslizamento", "landslide", "avalanche",
-        "seca", "drought", "emergência", "emergency", "evacuação", "evacuation",
-        "mortos", "vítimas", "desabrigados", "desaparecidos",
+        "seca", "drought", "emergencia", "emergency", "evacuacao", "evacuation",
+        "mortos", "vitimas", "desabrigados", "desaparecidos",
         "disaster", "catastrophe", "destruction", "devastation"
       ]
     },
+    "portugal_boost": {
+      "description": "Keywords que dao bonus extra para noticias de Portugal",
+      "terms": [
+        "portugal", "lisboa", "porto", "assembleia da republica",
+        "primeiro-ministro", "marcelo", "montenegro", "governo portugues",
+        "psd", "ps", "chega", "tribunal constitucional", "pgr",
+        "orcamento de estado", "autarquicas"
+      ],
+      "weight": 1.5
+    },
     "filter_out": {
       "terms": [
-        "horóscopo", "horoscope", "zodíaco", "astrologia",
+        "horoscopo", "horoscope", "zodiaco", "astrologia",
         "reality show", "big brother", "celebridade",
         "fofoca", "gossip", "kardashian",
         "bitcoin price", "crypto price", "nft",
-        "promoção", "desconto", "oferta", "black friday",
+        "promocao", "desconto", "oferta", "black friday",
         "receita", "recipe", "lifestyle", "moda", "fashion"
       ]
     }
+  },
+  "blog_categories": {
+    "description": "Categorias para filtros no blog",
+    "categories": [
+      {
+        "id": "politics_pt",
+        "label": "Politica Portugal",
+        "icon": "flag-pt",
+        "color": "#006600"
+      },
+      {
+        "id": "politics_br",
+        "label": "Politica Brasil",
+        "icon": "flag-br",
+        "color": "#009933"
+      },
+      {
+        "id": "politics_world",
+        "label": "Politica Internacional",
+        "icon": "globe",
+        "color": "#0066cc"
+      },
+      {
+        "id": "controversies",
+        "label": "Controversias",
+        "icon": "alert",
+        "color": "#ff6600"
+      },
+      {
+        "id": "conflicts",
+        "label": "Conflitos",
+        "icon": "warning",
+        "color": "#cc0000"
+      },
+      {
+        "id": "disasters",
+        "label": "Desastres",
+        "icon": "danger",
+        "color": "#990000"
+      }
+    ]
+  },
+  "blog_regions": {
+    "description": "Regioes para filtros no blog",
+    "regions": [
+      {
+        "id": "Portugal",
+        "label": "Portugal",
+        "priority": 1
+      },
+      {
+        "id": "Brasil",
+        "label": "Brasil",
+        "priority": 2
+      },
+      {
+        "id": "Internacional",
+        "label": "Internacional",
+        "priority": 3
+      }
+    ]
   }
 }
