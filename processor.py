@@ -97,6 +97,8 @@ INSTRUCOES DE FORMATO:
 4. Estrutura clara com 3-5 paragrafos
 5. Titulo informativo e directo (sem sensacionalismo)
 6. Resumo factual de 2-3 frases
+7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, controversies, conflicts, disasters
+8. Sugere a regiao mais adequada: Portugal, Brasil, Internacional, Misto
 
 IDIOMA: Portugues de Portugal
 
@@ -105,7 +107,9 @@ RESPONDE APENAS EM JSON (sem markdown):
     "title": "titulo informativo e neutro",
     "content": "conteudo factual em portugues (3-5 paragrafos)",
     "summary": "resumo dos factos principais (2-3 frases)",
-    "tags": ["tag1", "tag2", "tag3"]
+    "tags": ["tag1", "tag2", "tag3"],
+    "suggested_category": "categoria",
+    "suggested_region": "regiao"
 }}"""
 
     response = requests.post(
@@ -171,6 +175,8 @@ INSTRUCOES DE FORMATO:
 4. Estrutura clara com 3-5 paragrafos
 5. Titulo informativo e directo (sem sensacionalismo)
 6. Resumo factual de 2-3 frases
+7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, controversies, conflicts, disasters
+8. Sugere a regiao mais adequada: Portugal, Brasil, Internacional, Misto
 
 IDIOMA: Portugues de Portugal
 
@@ -179,7 +185,9 @@ RESPONDE APENAS EM JSON (sem markdown):
     "title": "titulo informativo e neutro",
     "content": "conteudo factual em portugues (3-5 paragrafos)",
     "summary": "resumo dos factos principais (2-3 frases)",
-    "tags": ["tag1", "tag2", "tag3"]
+    "tags": ["tag1", "tag2", "tag3"],
+    "suggested_category": "categoria",
+    "suggested_region": "regiao"
 }}"""
 
     response = requests.post(
@@ -253,8 +261,10 @@ def process_single_news(news: dict) -> bool:
             news["link"]
         )
 
-        # Determinar regiao
-        region = news.get("region") or news.get("country") or "Internacional"
+        # Determinar regiao e categoria finais
+        original_region = news.get("region") or news.get("country") or "Internacional"
+        final_region = rewritten.get("suggested_region", original_region)
+        final_category = rewritten.get("suggested_category", news["category"])
 
         # Salvar post do blog
         post_id = save_blog_post(
@@ -265,8 +275,8 @@ def process_single_news(news: dict) -> bool:
             image_url=image_url,
             source_url=news["link"],
             source_name=news["source_name"],
-            category=news["category"],
-            region=region,
+            category=final_category,
+            region=final_region,
             tags=rewritten.get("tags", []),
             priority_score=news.get("priority_score", 0)
         )
