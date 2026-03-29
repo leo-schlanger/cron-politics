@@ -317,23 +317,44 @@ def get_recent_title_hashes(hours=72):
     return hashes
 
 
-def cleanup_old_news(days=60):
-    """Delete news older than specified days"""
+def cleanup_old_news(days=60, preserve_high_priority=True):
+    """Delete news older than specified days, preserving high-impact articles for ML.
+
+    Args:
+        days: Days of retention for normal articles
+        preserve_high_priority: If True, preserves articles with priority_score >= 4.0 for ML
+    """
     conn = get_connection()
     cur = conn.cursor()
 
     cutoff = datetime.utcnow() - timedelta(days=days)
 
-    cur.execute("DELETE FROM news WHERE fetched_at < %s", (cutoff,))
-    deleted = cur.rowcount
+    # Cleanup news (preserve high priority for ML analysis)
+    if preserve_high_priority:
+        cur.execute("""
+            DELETE FROM news
+            WHERE fetched_at < %s
+            AND priority_score < 4.0
+        """, (cutoff,))
+    else:
+        cur.execute("DELETE FROM news WHERE fetched_at < %s", (cutoff,))
 
+    deleted_news = cur.rowcount
+
+    # Cleanup fetch_logs (no historical value)
     cur.execute("DELETE FROM fetch_logs WHERE created_at < %s", (cutoff,))
+    deleted_logs = cur.rowcount
 
     conn.commit()
     cur.close()
     conn.close()
 
-    return deleted
+    print(f"Deleted {deleted_news} news articles")
+    print(f"Deleted {deleted_logs} fetch logs")
+    if preserve_high_priority:
+        print("Preserved: articles with priority_score >= 4.0 for ML")
+
+    return deleted_news
 
 
 def get_stats():

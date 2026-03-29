@@ -2,13 +2,13 @@ name: Cleanup Old News
 
 on:
   schedule:
-    - cron: '0 3 * * 0'  # Domingo às 3h
+    - cron: '0 3 * * 0'  # Domingo às 3h UTC
   workflow_dispatch:
     inputs:
       days:
-        description: 'Dias para manter (padrão: 60)'
+        description: 'Dias para manter (padrão: 7)'
         required: false
-        default: '60'
+        default: '7'
 
 jobs:
   cleanup:
@@ -28,10 +28,10 @@ jobs:
       - name: Instalar dependências
         run: pip install -r requirements.txt
 
-      - name: Cleanup
+      - name: Cleanup (preserva alto impacto para ML)
         run: |
           DAYS="${{ github.event.inputs.days }}"
-          python main.py cleanup --days ${DAYS:-60}
+          python main.py cleanup --days ${DAYS:-7}
 
       - name: Estatísticas após cleanup
         run: python main.py stats

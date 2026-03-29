@@ -102,12 +102,13 @@ def cmd_stats(args):
 
 
 def cmd_cleanup(args):
-    """Cleanup old news"""
+    """Cleanup old news, preserving high-impact articles for ML"""
     days = args.days if hasattr(args, "days") else 60
 
     print(f"Cleaning up news older than {days} days...")
-    deleted = cleanup_old_news(days)
-    print(f"Deleted {deleted:,} old news entries")
+    print(f"(Preserving: articles with priority_score >= 4.0 for ML)")
+    deleted = cleanup_old_news(days, preserve_high_priority=True)
+    print(f"\nTotal deleted: {deleted:,} news entries")
 
 
 def cmd_sources(args):
