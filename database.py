@@ -343,18 +343,21 @@ def cleanup_old_news(days=60, preserve_high_priority=True):
 
     # Cleanup news (preserve high priority for ML analysis)
     # Threshold 8.0 = artigos com 4+ keywords no título (mais relevantes)
+    # Exclude news referenced by processing_queue or blog_posts (FK constraints)
     if preserve_high_priority:
         cur.execute("""
             DELETE FROM news
             WHERE fetched_at < %s
             AND priority_score < 8.0
             AND id NOT IN (SELECT news_id FROM processing_queue WHERE news_id IS NOT NULL)
+            AND id NOT IN (SELECT news_id FROM blog_posts WHERE news_id IS NOT NULL)
         """, (cutoff,))
     else:
         cur.execute("""
             DELETE FROM news
             WHERE fetched_at < %s
             AND id NOT IN (SELECT news_id FROM processing_queue WHERE news_id IS NOT NULL)
+            AND id NOT IN (SELECT news_id FROM blog_posts WHERE news_id IS NOT NULL)
         """, (cutoff,))
 
     deleted_news = cur.rowcount
