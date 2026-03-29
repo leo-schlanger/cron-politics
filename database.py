@@ -327,12 +327,19 @@ def cleanup_old_news(days=60, preserve_high_priority=True):
 
     Args:
         days: Days of retention for normal articles
-        preserve_high_priority: If True, preserves articles with priority_score >= 4.0 for ML
+        preserve_high_priority: If True, preserves articles with priority_score >= 8.0 for ML
     """
     conn = get_connection()
     cur = conn.cursor()
 
     cutoff = datetime.utcnow() - timedelta(days=days)
+
+    # First: cleanup processing_queue (references news table)
+    cur.execute("""
+        DELETE FROM processing_queue
+        WHERE created_at < %s
+    """, (cutoff,))
+    deleted_queue = cur.rowcount
 
     # Cleanup news (preserve high priority for ML analysis)
     # Threshold 8.0 = artigos com 4+ keywords no título (mais relevantes)
@@ -341,9 +348,14 @@ def cleanup_old_news(days=60, preserve_high_priority=True):
             DELETE FROM news
             WHERE fetched_at < %s
             AND priority_score < 8.0
+            AND id NOT IN (SELECT news_id FROM processing_queue WHERE news_id IS NOT NULL)
         """, (cutoff,))
     else:
-        cur.execute("DELETE FROM news WHERE fetched_at < %s", (cutoff,))
+        cur.execute("""
+            DELETE FROM news
+            WHERE fetched_at < %s
+            AND id NOT IN (SELECT news_id FROM processing_queue WHERE news_id IS NOT NULL)
+        """, (cutoff,))
 
     deleted_news = cur.rowcount
 
@@ -355,10 +367,11 @@ def cleanup_old_news(days=60, preserve_high_priority=True):
     cur.close()
     conn.close()
 
+    print(f"Deleted {deleted_queue} queue entries")
     print(f"Deleted {deleted_news} news articles")
     print(f"Deleted {deleted_logs} fetch logs")
     if preserve_high_priority:
-        print("Preserved: articles with priority_score >= 4.0 for ML")
+        print("Preserved: articles with priority_score >= 8.0 for ML")
 
     return deleted_news
 
