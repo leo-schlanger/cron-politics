@@ -133,7 +133,8 @@ def fetch_all(category=None, quiet=False):
     """Fetch news from all active sources"""
     sources = get_active_sources(category)
     positive_kw, negative_kw = get_keywords()
-    existing_hashes = get_recent_title_hashes(hours=72)
+    # Otimização: 24h é suficiente para dedup (era 72h)
+    existing_hashes = get_recent_title_hashes(hours=24)
 
     stats = {
         "total_sources": len(sources),

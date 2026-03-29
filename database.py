@@ -301,14 +301,19 @@ def insert_fetch_log(source_id, status, news_count=0, error_message=None, durati
     conn.close()
 
 
-def get_recent_title_hashes(hours=72):
-    """Get title hashes from recent news for deduplication"""
+def get_recent_title_hashes(hours=24):
+    """Get title hashes from recent news for deduplication.
+    Optimized: reduced from 72h to 24h to save egress.
+    """
     conn = get_connection()
     cur = conn.cursor()
 
+    # Otimização: limite de 500 registros para reduzir egress
     cur.execute("""
         SELECT title_hash FROM news
         WHERE fetched_at > %s AND title_hash IS NOT NULL
+        ORDER BY fetched_at DESC
+        LIMIT 500
     """, (datetime.utcnow() - timedelta(hours=hours),))
 
     hashes = set(row[0] for row in cur.fetchall())
