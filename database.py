@@ -335,11 +335,12 @@ def cleanup_old_news(days=60, preserve_high_priority=True):
     cutoff = datetime.utcnow() - timedelta(days=days)
 
     # Cleanup news (preserve high priority for ML analysis)
+    # Threshold 8.0 = artigos com 4+ keywords no título (mais relevantes)
     if preserve_high_priority:
         cur.execute("""
             DELETE FROM news
             WHERE fetched_at < %s
-            AND priority_score < 4.0
+            AND priority_score < 8.0
         """, (cutoff,))
     else:
         cur.execute("DELETE FROM news WHERE fetched_at < %s", (cutoff,))

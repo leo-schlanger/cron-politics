@@ -106,7 +106,7 @@ def cmd_cleanup(args):
     days = args.days if hasattr(args, "days") else 60
 
     print(f"Cleaning up news older than {days} days...")
-    print(f"(Preserving: articles with priority_score >= 4.0 for ML)")
+    print(f"(Preserving: articles with priority_score >= 8.0 for ML)")
     deleted = cleanup_old_news(days, preserve_high_priority=True)
     print(f"\nTotal deleted: {deleted:,} news entries")
 
