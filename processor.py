@@ -17,7 +17,7 @@ load_dotenv()
 
 from database_blog import (
     get_pending_news, save_blog_post, update_queue_status,
-    add_to_processing_queue, get_blog_stats
+    add_to_processing_queue, get_blog_stats, DuplicateBlogPostError
 )
 from database import get_connection
 from utils import retry, logger, RetryError
@@ -74,6 +74,8 @@ def rewrite_with_openai(title: str, content: str, source_name: str, category: st
 
     prompt = f"""Es um jornalista imparcial e rigoroso.
 Reescreve a noticia abaixo em formato de artigo informativo.
+TODO o texto final (titulo, conteudo, resumo e tags) DEVE estar em Portugues de Portugal.
+Se a noticia original estiver noutro idioma, TRADUZ tudo para Portugues de Portugal.
 
 NOTICIA ORIGINAL:
 Titulo: {title}
@@ -96,18 +98,18 @@ INSTRUCOES DE FORMATO:
 2. Mantem TODOS os factos, dados e numeros importantes
 3. Tom serio, profissional e factual
 4. Estrutura clara com 3-5 paragrafos
-5. Titulo informativo e directo (sem sensacionalismo)
-6. Resumo factual de 2-3 frases
+5. Titulo informativo e directo em Portugues de Portugal (sem sensacionalismo, NUNCA em ingles)
+6. Resumo factual de 2-3 frases em Portugues de Portugal
 7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, politics_latam, controversies, conflicts, disasters
 8. Sugere a regiao mais adequada: Portugal, Brasil, America Latina, Internacional, Misto
 
-IDIOMA: Portugues de Portugal
+IDIOMA OBRIGATORIO: Portugues de Portugal (todos os campos sem excepcao)
 
 RESPONDE APENAS EM JSON (sem markdown):
 {{
-    "title": "titulo informativo e neutro",
+    "title": "titulo informativo e neutro EM PORTUGUES",
     "content": "conteudo factual em portugues (3-5 paragrafos)",
-    "summary": "resumo dos factos principais (2-3 frases)",
+    "summary": "resumo dos factos principais em portugues (2-3 frases)",
     "tags": ["tag1", "tag2", "tag3"],
     "suggested_category": "categoria",
     "suggested_region": "regiao"
@@ -152,6 +154,8 @@ def rewrite_with_anthropic(title: str, content: str, source_name: str, category:
 
     prompt = f"""Es um jornalista imparcial e rigoroso.
 Reescreve a noticia abaixo em formato de artigo informativo.
+TODO o texto final (titulo, conteudo, resumo e tags) DEVE estar em Portugues de Portugal.
+Se a noticia original estiver noutro idioma, TRADUZ tudo para Portugues de Portugal.
 
 NOTICIA ORIGINAL:
 Titulo: {title}
@@ -174,18 +178,18 @@ INSTRUCOES DE FORMATO:
 2. Mantem TODOS os factos, dados e numeros importantes
 3. Tom serio, profissional e factual
 4. Estrutura clara com 3-5 paragrafos
-5. Titulo informativo e directo (sem sensacionalismo)
-6. Resumo factual de 2-3 frases
+5. Titulo informativo e directo em Portugues de Portugal (sem sensacionalismo, NUNCA em ingles)
+6. Resumo factual de 2-3 frases em Portugues de Portugal
 7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, politics_latam, controversies, conflicts, disasters
 8. Sugere a regiao mais adequada: Portugal, Brasil, America Latina, Internacional, Misto
 
-IDIOMA: Portugues de Portugal
+IDIOMA OBRIGATORIO: Portugues de Portugal (todos os campos sem excepcao)
 
 RESPONDE APENAS EM JSON (sem markdown):
 {{
-    "title": "titulo informativo e neutro",
+    "title": "titulo informativo e neutro EM PORTUGUES",
     "content": "conteudo factual em portugues (3-5 paragrafos)",
-    "summary": "resumo dos factos principais (2-3 frases)",
+    "summary": "resumo dos factos principais em portugues (2-3 frases)",
     "tags": ["tag1", "tag2", "tag3"],
     "suggested_category": "categoria",
     "suggested_region": "regiao"
@@ -240,6 +244,24 @@ def rewrite_news(title: str, content: str, source_name: str, category: str) -> d
         raise Exception("Nenhuma API de IA configurada. Configure OPENAI_API_KEY ou ANTHROPIC_API_KEY")
 
 
+def _title_looks_english(title: str) -> bool:
+    """Detecta se um titulo parece estar em ingles (heuristica simples)."""
+    english_words = {
+        "the", "is", "are", "was", "were", "has", "have", "had", "will",
+        "would", "could", "should", "for", "and", "but", "with", "from",
+        "that", "this", "after", "says", "said", "new", "over", "into",
+        "about", "amid", "warns", "calls", "faces", "plans", "seeks",
+        "trump", "biden", "election", "minister", "prime", "announces",
+        "government", "policy", "according", "officials", "president",
+    }
+    words = set(title.lower().split())
+    matches = words & english_words
+    # Se 30%+ das palavras sao inglesas comuns, provavelmente e ingles
+    if len(words) < 3:
+        return False
+    return len(matches) / len(words) >= 0.3
+
+
 def process_single_news(news: dict) -> bool:
     """Processa uma unica noticia."""
     try:
@@ -255,6 +277,18 @@ def process_single_news(news: dict) -> bool:
             source_name=news["source_name"],
             category=news["category"]
         )
+
+        # Validar que o titulo foi traduzido para portugues
+        if _title_looks_english(rewritten.get("title", "")):
+            logger.warning(f"  Titulo em ingles detectado, retentando: {rewritten['title'][:50]}")
+            rewritten = rewrite_news(
+                title=news["title"],
+                content=full_content,
+                source_name=news["source_name"],
+                category=news["category"]
+            )
+            if _title_looks_english(rewritten.get("title", "")):
+                logger.warning(f"  Titulo ainda em ingles apos retry: {rewritten['title'][:50]}")
 
         # Extrair imagem
         image_url = extract_image_from_content(
@@ -287,6 +321,10 @@ def process_single_news(news: dict) -> bool:
         logger.info(f"  Post #{post_id} criado com sucesso")
         return True
 
+    except DuplicateBlogPostError as e:
+        logger.info(f"  Duplicado ignorado: {str(e)[:80]}")
+        update_queue_status(news["queue_id"], "skipped", str(e))
+        return True
     except RetryError as e:
         error_msg = f"Falhou apos {MAX_API_RETRIES} tentativas: {e.last_exception}"
         logger.error(f"  Erro: {error_msg[:80]}")
@@ -302,6 +340,7 @@ def queue_high_priority_news(min_score: float = 2.0, limit: int = 20, portugal_b
     """
     Adiciona noticias de alta prioridade a fila de processamento.
     Da prioridade a noticias de Portugal.
+    Filtra noticias similares entre si e com posts recentes do blog.
     """
     conn = get_connection()
     try:
@@ -310,7 +349,7 @@ def queue_high_priority_news(min_score: float = 2.0, limit: int = 20, portugal_b
 
         # Query que prioriza Portugal
         cursor.execute("""
-            SELECT n.id, n.priority_score, s.country
+            SELECT n.id, n.title, n.description, n.priority_score, s.country
             FROM news n
             JOIN sources s ON n.source_id = s.id
             LEFT JOIN processing_queue pq ON n.id = pq.news_id
@@ -320,22 +359,38 @@ def queue_high_priority_news(min_score: float = 2.0, limit: int = 20, portugal_b
                 CASE WHEN s.country = 'Portugal' THEN 0 ELSE 1 END,
                 n.priority_score DESC
             LIMIT %s
-        """, (min_score, limit))
+        """, (min_score, limit * 2))  # Pegar mais candidatos para filtrar
 
-        rows = cursor.fetchall()
+        rows = [dict(r) for r in cursor.fetchall()]
     finally:
         conn.close()
 
+    # Deduplicar candidatos entre si
+    from deduplication import deduplicate_news_for_blog
+    unique_news = deduplicate_news_for_blog(rows, threshold=0.5)
+
     count = 0
     portugal_count = 0
-    for row in rows:
+    skipped_dup = 0
+    for row in unique_news[:limit]:
+        # Verificar similaridade com posts recentes do blog
+        from database_blog import check_similar_blog_post
+        similar = check_similar_blog_post(
+            row.get("title", ""),
+            row.get("description", ""),
+            threshold=0.45
+        )
+        if similar:
+            skipped_dup += 1
+            continue
+
         news_id = row["id"]
         if add_to_processing_queue(news_id):
             count += 1
             if row["country"] == "Portugal":
                 portugal_count += 1
 
-    print(f"[Queue] {count} noticias adicionadas ({portugal_count} de Portugal)")
+    print(f"[Queue] {count} noticias adicionadas ({portugal_count} de Portugal, {skipped_dup} duplicadas ignoradas)")
     return count
 
 

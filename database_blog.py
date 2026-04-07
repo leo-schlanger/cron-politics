@@ -20,6 +20,11 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 
+class DuplicateBlogPostError(Exception):
+    """Erro quando se tenta salvar um post duplicado no blog."""
+    pass
+
+
 def get_connection():
     if not DATABASE_URL:
         raise Exception("DATABASE_URL nao configurada")
@@ -151,6 +156,35 @@ def get_pending_news(limit: int = 10) -> list:
         conn.close()
 
 
+def check_similar_blog_post(title: str, summary: str, threshold: float = 0.5) -> Optional[dict]:
+    """
+    Verifica se ja existe um post similar no blog (ultimas 72h).
+    Retorna o post similar se encontrado, None caso contrario.
+    """
+    from deduplication import calculate_similarity
+    conn = get_connection()
+    try:
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("""
+            SELECT id, title, summary
+            FROM blog_posts
+            WHERE created_at > NOW() - INTERVAL '72 hours'
+            ORDER BY created_at DESC
+        """)
+        rows = cursor.fetchall()
+
+        new_text = f"{title} {summary or ''}"
+        for row in rows:
+            existing_text = f"{row['title']} {row['summary'] or ''}"
+            similarity = calculate_similarity(new_text, existing_text)
+            if similarity >= threshold:
+                return dict(row)
+
+        return None
+    finally:
+        conn.close()
+
+
 def save_blog_post(
     news_id: int,
     title: str,
@@ -165,13 +199,25 @@ def save_blog_post(
     priority_score: float
 ) -> int:
     """Salva post do blog processado."""
+    # Verificar duplicidade antes de salvar
+    similar = check_similar_blog_post(title, summary)
+    if similar:
+        raise DuplicateBlogPostError(
+            f"Post similar ja existe: #{similar['id']} - {similar['title'][:60]}"
+        )
+
     conn = get_connection()
     try:
         cursor = conn.cursor()
 
-        # Gerar slug
+        # Gerar slug unico
         slug = generate_slug(title)
         tags_str = json.dumps(tags) if tags else None
+
+        # Verificar se slug ja existe e gerar alternativo
+        cursor.execute("SELECT COUNT(*) FROM blog_posts WHERE slug = %s", (slug,))
+        if cursor.fetchone()[0] > 0:
+            slug = f"{slug}-{datetime.now().strftime('%H%M%S')}"
 
         cursor.execute("""
             INSERT INTO blog_posts (
