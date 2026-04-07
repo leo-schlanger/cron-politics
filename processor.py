@@ -37,6 +37,7 @@ CATEGORY_LABELS = {
     "politics_pt": "Politica Portugal",
     "politics_br": "Politica Brasil",
     "politics_world": "Politica Internacional",
+    "politics_latam": "Politica America Latina",
     "controversies": "Controversias",
     "conflicts": "Conflitos",
     "disasters": "Desastres"
@@ -97,8 +98,8 @@ INSTRUCOES DE FORMATO:
 4. Estrutura clara com 3-5 paragrafos
 5. Titulo informativo e directo (sem sensacionalismo)
 6. Resumo factual de 2-3 frases
-7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, controversies, conflicts, disasters
-8. Sugere a regiao mais adequada: Portugal, Brasil, Internacional, Misto
+7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, politics_latam, controversies, conflicts, disasters
+8. Sugere a regiao mais adequada: Portugal, Brasil, America Latina, Internacional, Misto
 
 IDIOMA: Portugues de Portugal
 
@@ -175,8 +176,8 @@ INSTRUCOES DE FORMATO:
 4. Estrutura clara com 3-5 paragrafos
 5. Titulo informativo e directo (sem sensacionalismo)
 6. Resumo factual de 2-3 frases
-7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, controversies, conflicts, disasters
-8. Sugere a regiao mais adequada: Portugal, Brasil, Internacional, Misto
+7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, politics_latam, controversies, conflicts, disasters
+8. Sugere a regiao mais adequada: Portugal, Brasil, America Latina, Internacional, Misto
 
 IDIOMA: Portugues de Portugal
 

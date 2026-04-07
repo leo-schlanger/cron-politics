@@ -103,8 +103,9 @@ def insert_sources_from_json(sources_data):
     cur = conn.cursor()
 
     inserted = 0
+    skip_keys = {"keywords", "blog_categories", "blog_regions"}
     for category, data in sources_data.items():
-        if category == "keywords":
+        if category in skip_keys:
             continue
         feeds = data.get("feeds", [])
         for feed in feeds:

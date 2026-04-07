@@ -47,32 +47,20 @@
         "language": "pt"
       },
       {
-        "name": "SIC Noticias",
-        "url": "https://sicnoticias.pt/rss",
-        "country": "Portugal",
-        "language": "pt"
-      },
-      {
-        "name": "Jornal de Noticias",
-        "url": "https://www.jn.pt/rss/",
-        "country": "Portugal",
-        "language": "pt"
-      },
-      {
         "name": "Diario de Noticias",
-        "url": "https://www.dn.pt/rss/",
+        "url": "https://www.dn.pt/feed",
         "country": "Portugal",
         "language": "pt"
       },
       {
-        "name": "TSF",
-        "url": "https://www.tsf.pt/rss/",
+        "name": "SOL",
+        "url": "https://sol.iol.pt/rss",
         "country": "Portugal",
         "language": "pt"
       },
       {
-        "name": "Expresso",
-        "url": "https://expresso.pt/rss",
+        "name": "Sabado",
+        "url": "https://www.sabado.pt/rss",
         "country": "Portugal",
         "language": "pt"
       },
@@ -127,7 +115,7 @@
       },
       {
         "name": "Brasil de Fato",
-        "url": "https://www.brasildefato.com.br/rss2.xml",
+        "url": "https://www.brasildefato.com.br/feed/",
         "country": "Brasil",
         "language": "pt"
       },
@@ -140,6 +128,36 @@
       {
         "name": "Agencia Brasil",
         "url": "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "Metropoles",
+        "url": "https://www.metropoles.com/brasil/feed",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "CNN Brasil",
+        "url": "https://www.cnnbrasil.com.br/feed/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "JOTA",
+        "url": "https://www.jota.info/feed",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "InfoMoney",
+        "url": "https://www.infomoney.com.br/feed/",
+        "country": "Brasil",
+        "language": "pt"
+      },
+      {
+        "name": "BBC Brasil",
+        "url": "https://feeds.bbci.co.uk/portuguese/rss.xml",
         "country": "Brasil",
         "language": "pt"
       }
@@ -176,7 +194,7 @@
       },
       {
         "name": "DW - Politics",
-        "url": "https://rss.dw.com/xml/rss-en-pol",
+        "url": "https://rss.dw.com/rdf/rss-en-top",
         "country": "Germany",
         "language": "en"
       },
@@ -209,6 +227,121 @@
         "url": "https://feeds.washingtonpost.com/rss/politics",
         "country": "USA",
         "language": "en"
+      },
+      {
+        "name": "France 24",
+        "url": "https://www.france24.com/en/rss",
+        "country": "France",
+        "language": "en"
+      },
+      {
+        "name": "Euronews EN",
+        "url": "https://www.euronews.com/rss",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "Nikkei Asia",
+        "url": "https://asia.nikkei.com/rss/feed/nar",
+        "country": "Japan",
+        "language": "en"
+      },
+      {
+        "name": "Japan Times",
+        "url": "https://www.japantimes.co.jp/feed/",
+        "country": "Japan",
+        "language": "en"
+      },
+      {
+        "name": "BBC Europe",
+        "url": "https://feeds.bbci.co.uk/news/world/europe/rss.xml",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "BBC Latin America",
+        "url": "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "BBC Asia",
+        "url": "https://feeds.bbci.co.uk/news/world/asia/rss.xml",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "BBC Africa",
+        "url": "https://feeds.bbci.co.uk/news/world/africa/rss.xml",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "BBC Middle East",
+        "url": "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
+        "country": "Internacional",
+        "language": "en"
+      }
+    ]
+  },
+  "politics_latam": {
+    "description": "Politica da America Latina",
+    "region": "Internacional",
+    "blog_label": "Politica America Latina",
+    "feeds": [
+      {
+        "name": "BBC Mundo",
+        "url": "https://feeds.bbci.co.uk/mundo/rss.xml",
+        "country": "Internacional",
+        "language": "es"
+      },
+      {
+        "name": "Infobae",
+        "url": "https://www.infobae.com/arc/outboundfeeds/rss/",
+        "country": "Argentina",
+        "language": "es"
+      },
+      {
+        "name": "Infobae - Politica",
+        "url": "https://www.infobae.com/arc/outboundfeeds/rss/category/politica/?outputType=xml",
+        "country": "Argentina",
+        "language": "es"
+      },
+      {
+        "name": "El Universal",
+        "url": "https://www.eluniversal.com.mx/arc/outboundfeeds/rss/?outputType=xml",
+        "country": "Mexico",
+        "language": "es"
+      },
+      {
+        "name": "El Financiero",
+        "url": "https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml",
+        "country": "Mexico",
+        "language": "es"
+      },
+      {
+        "name": "La Tercera",
+        "url": "https://www.latercera.com/arc/outboundfeeds/rss/?outputType=xml",
+        "country": "Chile",
+        "language": "es"
+      },
+      {
+        "name": "El Tiempo - Politica",
+        "url": "https://www.eltiempo.com/rss/politica.xml",
+        "country": "Colombia",
+        "language": "es"
+      },
+      {
+        "name": "Semana",
+        "url": "https://www.semana.com/arc/outboundfeeds/rss/?outputType=xml",
+        "country": "Colombia",
+        "language": "es"
+      },
+      {
+        "name": "France 24 ES",
+        "url": "https://www.france24.com/es/rss",
+        "country": "Internacional",
+        "language": "es"
       }
     ]
   },
@@ -343,6 +476,24 @@
         "url": "https://thediplomat.com/feed/",
         "country": "USA",
         "language": "en"
+      },
+      {
+        "name": "Africanews",
+        "url": "https://www.africanews.com/feed/",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "Daily Maverick",
+        "url": "https://www.dailymaverick.co.za/dmrss/",
+        "country": "South Africa",
+        "language": "en"
+      },
+      {
+        "name": "Dawn",
+        "url": "https://www.dawn.com/feeds/home",
+        "country": "Pakistan",
+        "language": "en"
       }
     ]
   },
@@ -434,7 +585,21 @@
         "european union", "nato", "un", "g7", "g20", "brics",
         "election", "vote", "impeachment", "sanction",
         "prime minister", "president", "parliament",
-        "macron", "scholz", "sunak", "modi", "erdogan", "netanyahu"
+        "macron", "scholz", "sunak", "modi", "erdogan", "netanyahu",
+        "starmer", "meloni", "kishida", "african union"
+      ],
+      "politics_latam": [
+        "milei", "argentina", "buenos aires", "casa rosada",
+        "amlo", "sheinbaum", "mexico", "palacio nacional",
+        "boric", "chile", "santiago", "moneda",
+        "petro", "colombia", "bogota",
+        "maduro", "venezuela", "caracas",
+        "noboa", "ecuador", "quito",
+        "mercosur", "oas", "celac", "alianza del pacifico",
+        "elecciones", "congreso", "senado", "diputados",
+        "presidente", "gobierno", "ministerio",
+        "corrupcion", "protestas", "reforma",
+        "narcotrafico", "seguridad", "migracion"
       ],
       "controversies": [
         "escandalo", "polemica", "controversia", "demissao", "renuncia",
@@ -507,6 +672,12 @@
         "label": "Politica Internacional",
         "icon": "globe",
         "color": "#0066cc"
+      },
+      {
+        "id": "politics_latam",
+        "label": "Politica America Latina",
+        "icon": "globe-americas",
+        "color": "#ff9900"
       },
       {
         "id": "controversies",
