@@ -4,6 +4,7 @@ RSS Feed Fetcher for Politics/News
 import re
 import time
 import json
+import unicodedata
 import feedparser
 import requests
 from datetime import datetime
@@ -43,9 +44,16 @@ def parse_date(date_str):
         return None
 
 
+def normalize_accents(text):
+    """Remove accents/diacritics for keyword matching (e.g. Irão -> irao)"""
+    nfkd = unicodedata.normalize('NFKD', text)
+    return ''.join(c for c in nfkd if not unicodedata.combining(c))
+
+
 def calculate_priority(title, description, positive_keywords, negative_keywords):
     """Calculate priority score based on keywords"""
-    text = f"{title} {description}".lower()
+    text = normalize_accents(f"{title} {description}".lower())
+    title_normalized = normalize_accents(title.lower())
 
     # Check negative keywords first
     for kw in negative_keywords:
@@ -59,7 +67,7 @@ def calculate_priority(title, description, positive_keywords, negative_keywords)
     for kw in positive_keywords:
         if kw in text:
             matched.append(kw)
-            if kw in title.lower():
+            if kw in title_normalized:
                 score += 2.0  # Title match = higher weight
             else:
                 score += 1.0  # Description match

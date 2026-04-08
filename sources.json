@@ -494,6 +494,30 @@
         "url": "https://www.dawn.com/feeds/home",
         "country": "Pakistan",
         "language": "en"
+      },
+      {
+        "name": "Iran International",
+        "url": "https://www.iranintl.com/en/feed",
+        "country": "Iran",
+        "language": "en"
+      },
+      {
+        "name": "Al Monitor - Middle East",
+        "url": "https://www.al-monitor.com/rss",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "Reuters - Middle East",
+        "url": "https://www.reuters.com/arc/outboundfeeds/rss/category/middle-east/?outputType=xml",
+        "country": "Internacional",
+        "language": "en"
+      },
+      {
+        "name": "AP News - Middle East",
+        "url": "https://rsshub.app/apnews/topics/middle-east",
+        "country": "Internacional",
+        "language": "en"
       }
     ]
   },
@@ -583,10 +607,14 @@
         "trump", "biden", "white house", "congress", "senate",
         "putin", "russia", "kremlin", "xi jinping", "china",
         "european union", "nato", "un", "g7", "g20", "brics",
-        "election", "vote", "impeachment", "sanction",
+        "election", "vote", "impeachment", "sanction", "sancao", "sancoes",
         "prime minister", "president", "parliament",
         "macron", "scholz", "sunak", "modi", "erdogan", "netanyahu",
-        "starmer", "meloni", "kishida", "african union"
+        "starmer", "meloni", "kishida", "african union",
+        "khamenei", "aiatola", "ayatollah", "rouhani", "raisi", "pezeshkian",
+        "acordo nuclear", "nuclear deal", "jcpoa",
+        "estreito de ormuz", "strait of hormuz", "golfo persico", "persian gulf",
+        "medio oriente", "middle east", "oriente medio"
       ],
       "politics_latam": [
         "milei", "argentina", "buenos aires", "casa rosada",
@@ -614,10 +642,15 @@
         "bombardeio", "bombing", "missil", "missile", "drone",
         "invasao", "invasion", "ocupacao", "occupation",
         "ucrania", "ukraine", "gaza", "israel", "hamas", "hezbollah",
-        "taiwan", "coreia", "korea", "ira", "iran",
+        "taiwan", "coreia", "korea",
+        "iran", "irao", "ira", "teerao", "teera", "tehran", "persia",
+        "guardioes da revolucao", "revolutionary guard", "pasdaran", "irgc",
+        "proxy", "houthi", "huthi", "iemenita",
         "tropas", "troops", "militar", "military", "exercito", "army",
         "mortos", "casualties", "vitimas", "victims", "refugiados", "refugees",
-        "cease-fire", "ceasefire", "airstrike", "offensive", "frontline"
+        "cease-fire", "ceasefire", "airstrike", "offensive", "frontline",
+        "tensao", "tension", "escalada", "escalation", "retaliacao", "retaliation",
+        "negociacoes", "negotiations", "diplomacia", "diplomacy", "recuo", "retirada"
       ],
       "disasters": [
         "terremoto", "earthquake", "tremor", "sismo",
