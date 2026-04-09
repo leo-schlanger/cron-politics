@@ -7,7 +7,7 @@ import json
 import unicodedata
 import feedparser
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from dateutil import parser as date_parser
 
 from database import (
@@ -19,19 +19,12 @@ from database import (
     get_recent_title_hashes
 )
 from deduplication import generate_title_hash, is_duplicate
+from html_parser import clean_html
 
 
 USER_AGENT = "PoliticsNewsCron/1.0"
 FETCH_TIMEOUT = 30
-
-
-def clean_html(text):
-    """Remove HTML tags from text"""
-    if not text:
-        return ""
-    clean = re.sub(r'<[^>]+>', '', text)
-    clean = re.sub(r'\s+', ' ', clean)
-    return clean.strip()
+MAX_NEWS_AGE_DAYS = 3  # Reject news older than this
 
 
 def parse_date(date_str):
@@ -113,6 +106,14 @@ def process_entry(entry, source, positive_kw, negative_kw):
     date_str = entry.get("published", "") or entry.get("updated", "")
     published_at = parse_date(date_str)
 
+    # Reject news older than MAX_NEWS_AGE_DAYS
+    if published_at:
+        # Ensure timezone-aware comparison
+        now = datetime.now(timezone.utc)
+        pub = published_at if published_at.tzinfo else published_at.replace(tzinfo=timezone.utc)
+        if pub < now - timedelta(days=MAX_NEWS_AGE_DAYS):
+            return None
+
     # Calculate priority
     score, matched = calculate_priority(title, description, positive_kw, negative_kw)
 
@@ -141,8 +142,7 @@ def fetch_all(category=None, quiet=False):
     """Fetch news from all active sources"""
     sources = get_active_sources(category)
     positive_kw, negative_kw = get_keywords()
-    # Otimização: 24h é suficiente para dedup (era 72h)
-    existing_hashes = get_recent_title_hashes(hours=24)
+    existing_hashes = get_recent_title_hashes()
 
     stats = {
         "total_sources": len(sources),

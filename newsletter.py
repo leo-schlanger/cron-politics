@@ -10,7 +10,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
-from database import get_connection
+from database import get_connection, put_connection
 
 
 # Configuração
@@ -19,7 +19,7 @@ RECIPIENTS = os.environ.get("RECIPIENTS", "").split(",")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "noticias@resend.dev")
 
 
-def get_recent_news(hours=24, limit=100):
+def get_recent_news(hours=4, limit=100):
     """Busca notícias das últimas X horas"""
     conn = get_connection()
     cur = conn.cursor()
@@ -46,7 +46,7 @@ def get_recent_news(hours=24, limit=100):
     news = [dict(zip(columns, row)) for row in cur.fetchall()]
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return news
 
@@ -81,7 +81,7 @@ def get_stats():
     stats['high_priority'] = cur.fetchone()[0]
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return stats
 
@@ -226,7 +226,7 @@ def create_html_summary(news, stats):
     return html
 
 
-def send_newsletter(hours=24, limit=100):
+def send_newsletter(hours=4, limit=100):
     """Gera e envia a newsletter"""
     if not RESEND_API_KEY:
         print("ERRO: RESEND_API_KEY não configurada")
@@ -293,7 +293,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Newsletter Politics")
-    parser.add_argument("--hours", "-H", type=int, default=24, help="Horas para buscar (default: 24)")
+    parser.add_argument("--hours", "-H", type=int, default=4, help="Horas para buscar (default: 4)")
     parser.add_argument("--limit", "-l", type=int, default=100, help="Limite de notícias (default: 100)")
     parser.add_argument("--test", "-t", action="store_true", help="Modo teste (não envia email)")
 

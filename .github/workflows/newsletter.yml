@@ -34,4 +34,4 @@ jobs:
       - name: Enviar newsletter
         run: |
           HOURS="${{ github.event.inputs.hours }}"
-          python newsletter.py --hours ${HOURS:-24}
+          python newsletter.py --hours ${HOURS:-4}

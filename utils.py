@@ -183,10 +183,6 @@ class RateLimiter:
         pass
 
 
-# Rate limiter global para requests (2 req/sec por padrao)
-request_limiter = RateLimiter(calls_per_second=2.0, burst=5)
-
-
 # ============================================================
 # UTILIDADES DE TEMPO
 # ============================================================

@@ -19,7 +19,7 @@ from database_blog import (
     get_pending_news, save_blog_post, update_queue_status,
     add_to_processing_queue, get_blog_stats, DuplicateBlogPostError
 )
-from database import get_connection
+from database import get_connection, put_connection
 from utils import retry, logger, RetryError
 from html_parser import extract_image_from_content as extract_image_html
 
@@ -59,20 +59,11 @@ def extract_image_from_content(content: str, link: str) -> Optional[str]:
     return extract_image_html(content, page_html)
 
 
-@retry(
-    max_attempts=MAX_API_RETRIES,
-    delay=2.0,
-    backoff=2.0,
-    exceptions=(requests.exceptions.RequestException, requests.exceptions.Timeout)
-)
-def rewrite_with_openai(title: str, content: str, source_name: str, category: str) -> dict:
-    """Reescreve noticia usando OpenAI GPT-4."""
-    if not OPENAI_API_KEY:
-        raise Exception("OPENAI_API_KEY nao configurada")
-
+def _build_rewrite_prompt(title: str, content: str, source_name: str, category: str) -> str:
+    """Constroi prompt de reescrita para IA."""
     category_label = CATEGORY_LABELS.get(category, category)
 
-    prompt = f"""Es um jornalista imparcial e rigoroso.
+    return f"""Es um jornalista imparcial e rigoroso.
 Reescreve a noticia abaixo em formato de artigo informativo.
 TODO o texto final (titulo, conteudo, resumo e tags) DEVE estar em Portugues de Portugal.
 Se a noticia original estiver noutro idioma, TRADUZ tudo para Portugues de Portugal.
@@ -114,6 +105,39 @@ RESPONDE APENAS EM JSON (sem markdown):
     "suggested_category": "categoria",
     "suggested_region": "regiao"
 }}"""
+
+
+def _parse_json_response(text: str) -> dict:
+    """Extrai e parseia JSON de uma resposta de IA."""
+    json_match = re.search(r'\{[\s\S]*\}', text)
+    if not json_match:
+        raise Exception("Nao foi possivel extrair JSON da resposta")
+
+    json_str = json_match.group()
+    json_str = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', ' ', json_str)
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError:
+        def fix_string_newlines(m):
+            s = m.group(0)
+            s = s.replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+            return s
+        json_str = re.sub(r'"[^"]*"', fix_string_newlines, json_str)
+        return json.loads(json_str)
+
+
+@retry(
+    max_attempts=MAX_API_RETRIES,
+    delay=2.0,
+    backoff=2.0,
+    exceptions=(requests.exceptions.RequestException, requests.exceptions.Timeout)
+)
+def rewrite_with_openai(title: str, content: str, source_name: str, category: str) -> dict:
+    """Reescreve noticia usando OpenAI GPT-4."""
+    if not OPENAI_API_KEY:
+        raise Exception("OPENAI_API_KEY nao configurada")
+
+    prompt = _build_rewrite_prompt(title, content, source_name, category)
 
     response = requests.post(
         "https://api.openai.com/v1/chat/completions",
@@ -134,9 +158,7 @@ RESPONDE APENAS EM JSON (sem markdown):
         raise Exception(f"OpenAI API error: {response.status_code} - {response.text}")
 
     result = response.json()
-    content_json = json.loads(result["choices"][0]["message"]["content"])
-
-    return content_json
+    return _parse_json_response(result["choices"][0]["message"]["content"])
 
 
 @retry(
@@ -150,50 +172,7 @@ def rewrite_with_anthropic(title: str, content: str, source_name: str, category:
     if not ANTHROPIC_API_KEY:
         raise Exception("ANTHROPIC_API_KEY nao configurada")
 
-    category_label = CATEGORY_LABELS.get(category, category)
-
-    prompt = f"""Es um jornalista imparcial e rigoroso.
-Reescreve a noticia abaixo em formato de artigo informativo.
-TODO o texto final (titulo, conteudo, resumo e tags) DEVE estar em Portugues de Portugal.
-Se a noticia original estiver noutro idioma, TRADUZ tudo para Portugues de Portugal.
-
-NOTICIA ORIGINAL:
-Titulo: {title}
-Fonte: {source_name}
-Categoria: {category_label}
-Conteudo: {content[:2000]}
-
-REGRAS DE NEUTRALIDADE (OBRIGATORIO):
-- Seres COMPLETAMENTE NEUTRO e IMPARCIAL politicamente
-- Reportar APENAS os factos, sem opinioes ou interpretacoes
-- NAO usar linguagem sensacionalista ou exagerada
-- NAO favorecer nenhum partido, politico ou ideologia
-- NAO usar adjetivos valorativos (bom, mau, excelente, terrivel)
-- Apresentar todos os lados da questao quando relevante
-- Usar verbos neutros: "afirmou", "declarou", "referiu" (nao "atacou", "destruiu")
-- Citar fontes e atribuir declaracoes corretamente
-
-INSTRUCOES DE FORMATO:
-1. Reescreve com as tuas proprias palavras (nao copies)
-2. Mantem TODOS os factos, dados e numeros importantes
-3. Tom serio, profissional e factual
-4. Estrutura clara com 3-5 paragrafos
-5. Titulo informativo e directo em Portugues de Portugal (sem sensacionalismo, NUNCA em ingles)
-6. Resumo factual de 2-3 frases em Portugues de Portugal
-7. Sugere a categoria mais adequada: politics_pt, politics_br, politics_world, politics_latam, controversies, conflicts, disasters
-8. Sugere a regiao mais adequada: Portugal, Brasil, America Latina, Internacional, Misto
-
-IDIOMA OBRIGATORIO: Portugues de Portugal (todos os campos sem excepcao)
-
-RESPONDE APENAS EM JSON (sem markdown):
-{{
-    "title": "titulo informativo e neutro EM PORTUGUES",
-    "content": "conteudo factual em portugues (3-5 paragrafos)",
-    "summary": "resumo dos factos principais em portugues (2-3 frases)",
-    "tags": ["tag1", "tag2", "tag3"],
-    "suggested_category": "categoria",
-    "suggested_region": "regiao"
-}}"""
+    prompt = _build_rewrite_prompt(title, content, source_name, category)
 
     response = requests.post(
         "https://api.anthropic.com/v1/messages",
@@ -203,7 +182,7 @@ RESPONDE APENAS EM JSON (sem markdown):
             "Content-Type": "application/json"
         },
         json={
-            "model": "claude-3-haiku-20240307",
+            "model": "claude-haiku-4-5-20251001",
             "max_tokens": 2000,
             "messages": [{"role": "user", "content": prompt}]
         },
@@ -214,24 +193,7 @@ RESPONDE APENAS EM JSON (sem markdown):
         raise Exception(f"Anthropic API error: {response.status_code} - {response.text}")
 
     result = response.json()
-    text = result["content"][0]["text"]
-
-    # Extrair JSON da resposta
-    json_match = re.search(r'\{[\s\S]*\}', text)
-    if json_match:
-        json_str = json_match.group()
-        json_str = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', ' ', json_str)
-        try:
-            return json.loads(json_str)
-        except json.JSONDecodeError:
-            def fix_string_newlines(m):
-                s = m.group(0)
-                s = s.replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
-                return s
-            json_str = re.sub(r'"[^"]*"', fix_string_newlines, json_str)
-            return json.loads(json_str)
-    else:
-        raise Exception("Nao foi possivel extrair JSON da resposta")
+    return _parse_json_response(result["content"][0]["text"])
 
 
 def rewrite_news(title: str, content: str, source_name: str, category: str) -> dict:
@@ -301,7 +263,7 @@ def process_single_news(news: dict) -> bool:
         final_region = rewritten.get("suggested_region", original_region)
         final_category = rewritten.get("suggested_category", news["category"])
 
-        # Salvar post do blog
+        # Salvar post do blog (usando data original da noticia)
         post_id = save_blog_post(
             news_id=news["id"],
             title=rewritten["title"],
@@ -313,7 +275,8 @@ def process_single_news(news: dict) -> bool:
             category=final_category,
             region=final_region,
             tags=rewritten.get("tags", []),
-            priority_score=news.get("priority_score", 0)
+            priority_score=news.get("priority_score", 0),
+            original_published_at=news.get("published_at")
         )
 
         # Atualizar fila
@@ -347,14 +310,15 @@ def queue_high_priority_news(min_score: float = 2.0, limit: int = 20, portugal_b
         from psycopg2.extras import RealDictCursor
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-        # Query que prioriza Portugal
+        # Query que prioriza Portugal (exclui noticias sem data ou muito antigas)
         cursor.execute("""
-            SELECT n.id, n.title, n.description, n.priority_score, s.country
+            SELECT n.id, n.title, n.description, n.priority_score, s.country, n.published_at
             FROM news n
             JOIN sources s ON n.source_id = s.id
             LEFT JOIN processing_queue pq ON n.id = pq.news_id
             WHERE n.priority_score >= %s
             AND pq.id IS NULL
+            AND (n.published_at IS NULL OR n.published_at > NOW() - INTERVAL '3 days')
             ORDER BY
                 CASE WHEN s.country = 'Portugal' THEN 0 ELSE 1 END,
                 n.priority_score DESC
@@ -363,7 +327,7 @@ def queue_high_priority_news(min_score: float = 2.0, limit: int = 20, portugal_b
 
         rows = [dict(r) for r in cursor.fetchall()]
     finally:
-        conn.close()
+        put_connection(conn)
 
     # Deduplicar candidatos entre si
     from deduplication import deduplicate_news_for_blog

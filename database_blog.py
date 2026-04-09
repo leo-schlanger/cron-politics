@@ -2,33 +2,20 @@
 Schema de banco de dados para blog de politica.
 Versao simplificada - apenas portugues.
 """
-import os
 import json
 import re
 import unicodedata
 from datetime import datetime
-from pathlib import Path
 from typing import Optional
-from dotenv import load_dotenv
 
-import psycopg2
 from psycopg2.extras import RealDictCursor
 
-# Load .env file
-load_dotenv()
-
-DATABASE_URL = os.getenv("DATABASE_URL")
+from database import get_connection, put_connection
 
 
 class DuplicateBlogPostError(Exception):
     """Erro quando se tenta salvar um post duplicado no blog."""
     pass
-
-
-def get_connection():
-    if not DATABASE_URL:
-        raise Exception("DATABASE_URL nao configurada")
-    return psycopg2.connect(DATABASE_URL)
 
 
 def init_blog_tables():
@@ -111,7 +98,7 @@ def init_blog_tables():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_processing_queue_status ON processing_queue(status)")
 
     conn.commit()
-    conn.close()
+    put_connection(conn)
     print("[DB] Tabelas de blog criadas")
 
 
@@ -131,7 +118,7 @@ def add_to_processing_queue(news_id: int) -> int:
         conn.commit()
         return queue_id
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def get_pending_news(limit: int = 10) -> list:
@@ -153,7 +140,7 @@ def get_pending_news(limit: int = 10) -> list:
         rows = cursor.fetchall()
         return [dict(row) for row in rows] if rows else []
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def check_similar_blog_post(title: str, summary: str, threshold: float = 0.5) -> Optional[dict]:
@@ -182,7 +169,7 @@ def check_similar_blog_post(title: str, summary: str, threshold: float = 0.5) ->
 
         return None
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def save_blog_post(
@@ -196,7 +183,8 @@ def save_blog_post(
     category: str,
     region: str,
     tags: list,
-    priority_score: float
+    priority_score: float,
+    original_published_at: datetime = None
 ) -> int:
     """Salva post do blog processado."""
     # Verificar duplicidade antes de salvar
@@ -219,6 +207,9 @@ def save_blog_post(
         if cursor.fetchone()[0] > 0:
             slug = f"{slug}-{datetime.now().strftime('%H%M%S')}"
 
+        # Use original publication date from the news source, fallback to NOW()
+        publish_date = original_published_at or datetime.utcnow()
+
         cursor.execute("""
             INSERT INTO blog_posts (
                 news_id, title, slug, content, summary,
@@ -227,18 +218,19 @@ def save_blog_post(
                 status, is_published, published_at
             ) VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                'published', TRUE, NOW()
+                'published', TRUE, %s
             ) RETURNING id
         """, (
             news_id, title, slug, content, summary,
             image_url, source_url, source_name, category, region, tags_str, priority_score,
-            summary[:160] if summary else None
+            summary[:160] if summary else None,
+            publish_date
         ))
         post_id = cursor.fetchone()[0]
         conn.commit()
         return post_id
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def update_queue_status(queue_id: int, status: str, error_message: str = None):
@@ -253,7 +245,7 @@ def update_queue_status(queue_id: int, status: str, error_message: str = None):
         """, (status, error_message, queue_id))
         conn.commit()
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def get_blog_posts(status: str = None, category: str = None, region: str = None, limit: int = 50) -> list:
@@ -282,7 +274,7 @@ def get_blog_posts(status: str = None, category: str = None, region: str = None,
         rows = cursor.fetchall()
         return [dict(row) for row in rows] if rows else []
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def generate_slug(title: str) -> str:
@@ -348,7 +340,7 @@ def get_blog_stats() -> dict:
 
         return stats
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def get_categories() -> list:
@@ -364,7 +356,7 @@ def get_categories() -> list:
         """)
         return [row[0] for row in cursor.fetchall()]
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 def get_regions() -> list:
@@ -380,7 +372,7 @@ def get_regions() -> list:
         """)
         return [row[0] for row in cursor.fetchall()]
     finally:
-        conn.close()
+        put_connection(conn)
 
 
 if __name__ == "__main__":

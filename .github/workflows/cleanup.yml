@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       days:
-        description: 'Dias para manter (padrão: 7)'
+        description: 'Dias para manter (workflow semanal: 7, CLI manual: 60)'
         required: false
         default: '7'
 

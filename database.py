@@ -2,19 +2,48 @@
 Database driver for Supabase/PostgreSQL
 """
 import os
+import atexit
 import psycopg2
+import psycopg2.pool
 from psycopg2.extras import RealDictCursor
 from datetime import datetime, timedelta
 
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 
+# Connection pool (lazy initialized)
+_pool = None
+
+
+def _get_pool():
+    """Get or create connection pool."""
+    global _pool
+    if _pool is None or _pool.closed:
+        if not DATABASE_URL:
+            raise Exception("DATABASE_URL not configured")
+        _pool = psycopg2.pool.SimpleConnectionPool(1, 5, DATABASE_URL)
+        atexit.register(_close_pool)
+    return _pool
+
+
+def _close_pool():
+    """Close connection pool on exit."""
+    global _pool
+    if _pool and not _pool.closed:
+        _pool.closeall()
+
 
 def get_connection():
-    """Get database connection"""
-    if not DATABASE_URL:
-        raise Exception("DATABASE_URL not configured")
-    return psycopg2.connect(DATABASE_URL)
+    """Get database connection from pool."""
+    return _get_pool().getconn()
+
+
+def put_connection(conn):
+    """Return connection to pool."""
+    try:
+        _get_pool().putconn(conn)
+    except Exception:
+        pass
 
 
 def setup_database():
@@ -93,7 +122,7 @@ def setup_database():
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
     print("Database setup complete!")
 
 
@@ -132,7 +161,7 @@ def insert_sources_from_json(sources_data):
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
     return inserted
 
 
@@ -178,7 +207,7 @@ def insert_keywords_from_json(keywords_data):
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
     return inserted
 
 
@@ -202,7 +231,7 @@ def get_active_sources(category=None):
 
     sources = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
     return sources
 
 
@@ -215,7 +244,7 @@ def get_keywords():
     keywords = cur.fetchall()
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     positive = [k["keyword"] for k in keywords if not k["is_negative"]]
     negative = [k["keyword"] for k in keywords if k["is_negative"]]
@@ -253,12 +282,12 @@ def insert_news(news_item, source_id):
         result = cur.fetchone()
         conn.commit()
         cur.close()
-        conn.close()
+        put_connection(conn)
         return result[0] if result else None
     except Exception as e:
         conn.rollback()
         cur.close()
-        conn.close()
+        put_connection(conn)
         raise e
 
 
@@ -284,7 +313,7 @@ def update_source_fetch(source_id, success=True, error_message=None):
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
 
 def insert_fetch_log(source_id, status, news_count=0, error_message=None, duration_ms=0):
@@ -299,27 +328,29 @@ def insert_fetch_log(source_id, status, news_count=0, error_message=None, durati
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
 
-def get_recent_title_hashes(hours=24):
-    """Get title hashes from recent news for deduplication.
-    Optimized: reduced from 72h to 24h to save egress.
+def get_recent_title_hashes():
+    """Get title hashes for deduplication.
+    Returns the 2000 most recent hashes regardless of time window,
+    preventing old articles from being re-inserted when RSS feeds re-circulate them.
     """
     conn = get_connection()
     cur = conn.cursor()
 
-    # Otimização: limite de 500 registros para reduzir egress
+    # Get ALL title hashes (not time-limited) to prevent old articles re-appearing.
+    # Limited to 2000 most recent to keep egress manageable.
     cur.execute("""
         SELECT title_hash FROM news
-        WHERE fetched_at > %s AND title_hash IS NOT NULL
+        WHERE title_hash IS NOT NULL
         ORDER BY fetched_at DESC
-        LIMIT 500
-    """, (datetime.utcnow() - timedelta(hours=hours),))
+        LIMIT 2000
+    """)
 
     hashes = set(row[0] for row in cur.fetchall())
     cur.close()
-    conn.close()
+    put_connection(conn)
     return hashes
 
 
@@ -369,7 +400,7 @@ def cleanup_old_news(days=60, preserve_high_priority=True):
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     print(f"Deleted {deleted_queue} queue entries")
     print(f"Deleted {deleted_news} news articles")
@@ -416,6 +447,6 @@ def get_stats():
     stats["high_priority"] = cur.fetchone()["count"]
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return stats
