@@ -212,7 +212,7 @@ def rewrite_with_gemini(title: str, content: str, source_name: str, category: st
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
                 "temperature": 0.3,
-                "maxOutputTokens": 2000,
+                "maxOutputTokens": 3000,
                 "responseMimeType": "application/json"
             }
         },
