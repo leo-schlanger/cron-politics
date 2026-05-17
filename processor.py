@@ -7,6 +7,7 @@ Processador de noticias de politica para blog.
 import os
 import re
 import json
+import time
 import requests
 from typing import Optional
 from datetime import datetime
@@ -26,9 +27,10 @@ from html_parser import extract_image_from_content as extract_image_html
 # APIs disponiveis
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Configuracao
-AI_PROVIDER = os.getenv("AI_PROVIDER", "anthropic")  # openai ou anthropic
+AI_PROVIDER = os.getenv("AI_PROVIDER", "gemini")  # gemini, anthropic ou openai
 MAX_API_RETRIES = 3
 
 
@@ -196,14 +198,71 @@ def rewrite_with_anthropic(title: str, content: str, source_name: str, category:
     return _parse_json_response(result["content"][0]["text"])
 
 
+def rewrite_with_gemini(title: str, content: str, source_name: str, category: str) -> dict:
+    """Reescreve noticia usando Google Gemini Flash (gratis). Sem retry — fail fast para fallback."""
+    if not GEMINI_API_KEY:
+        raise Exception("GEMINI_API_KEY nao configurada")
+
+    prompt = _build_rewrite_prompt(title, content, source_name, category)
+
+    response = requests.post(
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}",
+        headers={"Content-Type": "application/json"},
+        json={
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.3,
+                "maxOutputTokens": 2000,
+                "responseMimeType": "application/json"
+            }
+        },
+        timeout=60
+    )
+
+    if response.status_code == 429:
+        raise Exception("Gemini rate limit (429)")
+    if response.status_code != 200:
+        raise Exception(f"Gemini API error: {response.status_code}")
+
+    result = response.json()
+    candidates = result.get("candidates", [])
+    if not candidates:
+        raise Exception("Gemini sem candidates")
+    text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+    if not text:
+        raise Exception("Gemini texto vazio")
+
+    return _parse_json_response(text)
+
+
+# Contadores por run para logging
+_provider_stats = {"gemini": 0, "claude": 0}
+
+
 def rewrite_news(title: str, content: str, source_name: str, category: str) -> dict:
-    """Reescreve noticia usando o provedor de IA configurado."""
-    if AI_PROVIDER == "anthropic" and ANTHROPIC_API_KEY:
-        return rewrite_with_anthropic(title, content, source_name, category)
-    elif OPENAI_API_KEY:
+    """Reescreve noticia: tenta Gemini (gratis) primeiro, fallback para Claude se falhar."""
+    # Tentar Gemini primeiro (gratis)
+    if GEMINI_API_KEY:
+        try:
+            result = rewrite_with_gemini(title, content, source_name, category)
+            _provider_stats["gemini"] += 1
+            logger.info("  [Gemini] OK")
+            return result
+        except Exception as e:
+            logger.warning(f"  [Gemini] Falhou ({str(e)[:60]}), fallback Claude...")
+
+    # Fallback para Claude
+    if ANTHROPIC_API_KEY:
+        result = rewrite_with_anthropic(title, content, source_name, category)
+        _provider_stats["claude"] += 1
+        logger.info("  [Claude] OK (fallback)")
+        return result
+
+    # Fallback final para OpenAI
+    if OPENAI_API_KEY:
         return rewrite_with_openai(title, content, source_name, category)
-    else:
-        raise Exception("Nenhuma API de IA configurada. Configure OPENAI_API_KEY ou ANTHROPIC_API_KEY")
+
+    raise Exception("Nenhuma API de IA configurada. Configure GEMINI_API_KEY ou ANTHROPIC_API_KEY")
 
 
 def _title_looks_english(title: str) -> bool:
@@ -365,21 +424,29 @@ def process_queue(limit: int = 10):
     logger.info("=" * 50)
 
     # Verificar API
-    if not OPENAI_API_KEY and not ANTHROPIC_API_KEY:
-        logger.error("ERRO: Configure OPENAI_API_KEY ou ANTHROPIC_API_KEY")
+    if not GEMINI_API_KEY and not OPENAI_API_KEY and not ANTHROPIC_API_KEY:
+        logger.error("ERRO: Configure GEMINI_API_KEY, ANTHROPIC_API_KEY ou OPENAI_API_KEY")
         return
 
-    provider = "Anthropic" if AI_PROVIDER == "anthropic" else "OpenAI"
-    logger.info(f"Usando: {provider}")
+    providers = []
+    if GEMINI_API_KEY:
+        providers.append("Gemini (primario)")
+    if ANTHROPIC_API_KEY:
+        providers.append("Claude (fallback)")
+    logger.info(f"Providers: {', '.join(providers)}")
 
     # Pegar noticias pendentes (ja priorizadas por Portugal)
     pending = get_pending_news(limit)
     logger.info(f"Noticias na fila: {len(pending)}")
 
+    # Reset contadores
+    _provider_stats["gemini"] = 0
+    _provider_stats["claude"] = 0
+
     success = 0
     errors = 0
 
-    for news in pending:
+    for i, news in enumerate(pending):
         region = news.get("region") or news.get("country") or "?"
         logger.info(f"[{region}] {news['title'][:40]}...")
 
@@ -388,8 +455,13 @@ def process_queue(limit: int = 10):
         else:
             errors += 1
 
+        # Delay entre artigos para respeitar rate limit do Gemini (5 RPM)
+        if i < len(pending) - 1:
+            time.sleep(15)
+
     logger.info("=" * 50)
     logger.info(f"Concluido: {success} sucesso, {errors} erros")
+    logger.info(f"Providers usados: Gemini={_provider_stats['gemini']}, Claude={_provider_stats['claude']}")
     logger.info("=" * 50)
 
 
